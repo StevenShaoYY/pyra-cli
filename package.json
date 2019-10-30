@@ -1,0 +1,24 @@
+{
+    "name": "pyra-cli",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "bin": {
+        "pyra": "index.js"
+    },
+    "dependencies": {
+        "chalk": "^2.4.2",
+        "commander": "^3.0.2",
+        "download-git-repo": "^3.0.2",
+        "inquirer": "^7.0.0",
+        "lolcatjs": "^2.3.2",
+        "ora": "^4.0.2",
+        "shelljs": "^0.8.3",
+        "user-home": "^2.0.0"
+    }
+}
