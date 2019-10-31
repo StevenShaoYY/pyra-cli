@@ -9,6 +9,10 @@ const inquirer = require('inquirer');
 const ora = require('ora');
 const shelljs = require('shelljs')
 const userHome = require('user-home');
+const path = require('path')
+const ejs = require('ejs');
+const fs = require('fs-extra')
+const glob = require('glob')
 lolcatjs.options.seed = Math.round(Math.random() * 1000);
 lolcatjs.options.colors = true;
 const input = [
@@ -65,7 +69,7 @@ program.version(input, "-v --version");
 const tempaltes = {
     'backend': {
         url: 'https://git.wenlvcloud.com/luzy/admin-template',
-        downloadUrl: 'http://61.174.54.76:8000:luzy/admin-template#master',
+        downloadUrl: 'http://61.174.54.76:8000:luzy/admin-template#template',
         description: '后台模板'
     },
     'h5': {
@@ -86,25 +90,93 @@ const tempaltes = {
         description: '微前端后台模板'
     },
 }
+const tempaltesBackend = {
+    'normal': {
+        url: 'https://git.wenlvcloud.com/luzy/admin-template',
+        downloadUrl: 'http://61.174.54.76:8000:luzy/admin-template#template',
+        description: '普通后台模板'
+    },
+    'withForm': {
+        url: 'https://git.wenlvcloud.com/luzy/admin-template',
+        downloadUrl: 'http://61.174.54.76:8000:luzy/admin-template#template',
+        description: '可配置后台模板'
+    },
+}
 const tempalteChoices = [
     '后台模板','H5模板','大屏模板','小程序模板','微前端后台模板'
 ]
-const getSelectTemplate = answers => {
-    for(let item in tempaltes) {
-        if(answers.kind === tempaltes[item].description) {
-            return tempaltes[item]
+const tempalteBackendChoices = [
+    '普通后台模板','可配置后台模板'
+]
+const getSelectTemplate = (answers,tplList) => {
+    for(let item in tplList) {
+        if(answers === tplList[item].description) {
+            return tplList[item]
         }
     }
     return false;
 }
+function renderEjs (files, context) {
+    for(let tpl of files) {
+        render(tpl)
+    }
+    function render(tpl) {
+        ejs.renderFile(tpl, context, {}, function(err, str){
+            fs.writeFileSync(tpl.replace('.ejs', ''), str, 'utf8')
+            fs.removeSync(tpl)
+        })
+    }
+}
+
+async function startRender (transData) {
+    const CWD = process.cwd()
+    const PROJECT_DIR = path.resolve(CWD, transData.name)
+    const PROJECT_EJS = glob.sync('**/*.ejs', {cwd: PROJECT_DIR, absolute: true, dot: true})
+    renderEjs(PROJECT_EJS, transData)
+    console.log(chalk.green('项目创建成功'));
+}
 const binHandler = {
+    async form() {
+        return inquirer
+          .prompt([
+            {
+              type: 'list',
+              message: '请选择后台模板类别',
+              choices: tempalteBackendChoices,
+              name: 'backkind'
+            }
+        ]).then(answers => {
+            const selectItem = getSelectTemplate(answers.backkind, tempaltesBackend)
+            return selectItem
+        })
+    },
     init() {
       inquirer
         .prompt([
           {
             type: 'text',
             message: '请输入文件夹名称',
-            name: 'dirname'
+            name: 'name',
+            validate: function (input) {
+                if (input === '') {
+                    console.log('请输入文件夹名称!!!!');
+                    return false;
+                } else {
+                    return true
+                }
+              }
+          },
+          {
+            type: 'text',
+            message: '请输入项目描述',
+            name: 'description',
+            default: '智慧旅游项目'
+          },
+          {
+            type: 'text',
+            message: '请输入作者',
+            name: 'author',
+            default: 'shaojy'
           },
           {
             type: 'list',
@@ -113,10 +185,14 @@ const binHandler = {
             name: 'kind'
           }
         ])
-        .then(answers => {
-            const __dirname = answers.dirname;
-            const selectItem = getSelectTemplate(answers)
+        .then( async answers => {
+            const __dirname = answers.name;
+            const selectItem = getSelectTemplate(answers.kind, tempaltes)
             if (__dirname) {
+                if(selectItem.description === '后台模板') {
+                    const tempAnswer = await binHandler['form']()
+                    selectItem.downloadUrl = tempAnswer.downloadUrl
+                }
                 const spinner = ora('下载初始化模板中，请稍等...');
                 spinner.start();
                 // // 创建文件夹
@@ -130,24 +206,14 @@ const binHandler = {
                 download(selectItem.downloadUrl, __dirname, { clone: true }, (err) => {
                     spinner.stop();
                     if (err) {
-                        console.log(err)
-                        console.log('下载失败')
+                        console.log(chalk.red('下载失败'))
+                     
                         process.exit(1);
                     } else {
-                        console.log(chalk.green('项目创建成功'));
+                        startRender(answers)
                         process.exit(1);
                     }
                 })
-                // download(template, _projectPath, {clone: true}, err => {
-                // spinner.stop();
-                // if (err) {
-                //     console.error('下载失败', err.message.trim());
-                // } else {
-                //     // 要把用户整体安装过的项目进行核心数据的替换
-                //     shelljs.sed('-i', 'yd-vue-kernel', __dirname, _projectPath+'/package.json');
-                //     console.log(chalk.green('项目创建成功'));
-                // }
-                // });
             }
   
         })
@@ -158,7 +224,7 @@ program
     .arguments('<cmd> [env]')
     .description('pyra项目模板')
     .action((cmd, otherParms) => {
-        console.log(cmd, otherParms);
+        // console.log(cmd, otherParms);
         // console.log(tempaltes[templateName].downloadUrl)
         const handler = binHandler[cmd];
         if (typeof handler === 'undefined') {
@@ -180,5 +246,3 @@ program
 
     })
 program.parse(process.argv);
-
-// console.log('pyra cli')
