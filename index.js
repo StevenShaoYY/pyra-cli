@@ -225,7 +225,6 @@ const binHandler = {
                                         }
                                     })
                                 }
-
                             })
                     }
                 };
