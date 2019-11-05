@@ -1,9 +1,6 @@
 #!/usr/bin/env node
-
 const program = require('commander');
 const download = require('download-git-repo');
-// const sleep = require('sleep');
-const lolcatjs = require('lolcatjs');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const ora = require('ora');
@@ -13,8 +10,6 @@ const path = require('path')
 const ejs = require('ejs');
 const fs = require('fs-extra')
 const glob = require('glob')
-lolcatjs.options.seed = Math.round(Math.random() * 1000);
-lolcatjs.options.colors = true;
 const input = [
     "           _____                    _____                    _____                    _____                _____                                                    ",
     "          /\\    \\                  /\\    \\                  /\\    \\                  /\\    \\              /\\    \\                                                 ",
@@ -62,9 +57,7 @@ const input = [
     "                              \\|___|                   \\/____/                                           \\/____/                  \\/____/                          ",
     ""
 ].join('\n')
-// program.version(lolcatjs.fromString(input), "-v --version");
 program.version(input, "-v --version");
-// program.version(lolcatjs.fromString('0.0.1'), "-v --version");
 
 const tempaltes = {
     'backend': {
@@ -73,8 +66,8 @@ const tempaltes = {
         description: '后台模板'
     },
     'h5': {
-        downloadUrl: 'https://github.com:StevenShaoYY/QinQIn#master',
-        url: 'https://github.com/StevenShaoYY/QinQIn',
+        url: 'https://git.wenlvcloud.com/shaojy/h5-template',
+        downloadUrl: 'http://61.174.54.76:8000:shaojy/h5-template#template',
         description: 'H5模板'
     },
     'dashboard': {
@@ -179,6 +172,12 @@ const binHandler = {
             default: 'shaojy'
           },
           {
+            type: 'text',
+            message: '请输入项目标题',
+            name: 'title',
+            default: '我的项目'
+          },
+          {
             type: 'list',
             message: '请选择模板',
             choices: tempalteChoices,
@@ -207,7 +206,6 @@ const binHandler = {
                     spinner.stop();
                     if (err) {
                         console.log(chalk.red('下载失败'))
-                     
                         process.exit(1);
                     } else {
                         startRender(answers)
@@ -241,7 +239,7 @@ program
     .description('查看所有模板')
     .action(() => {
         for (let key in tempaltes) {
-            console.log(lolcatjs.fromString(`${key}----------------${tempaltes[key].description}`))
+            console.log(`${key}----------------${tempaltes[key].description}`)
         }
 
     })
