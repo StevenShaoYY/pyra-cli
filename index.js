@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 const program = require('commander');
 const download = require('download-git-repo');
 const chalk = require('chalk');
@@ -13,7 +14,7 @@ const glob = require('glob')
 const input = [
     "           _____                    _____                    _____                    _____                _____                                                    ",
     "          /\\    \\                  /\\    \\                  /\\    \\                  /\\    \\              /\\    \\                                                 ",
-    "         /::\\    \\                /::\\____\\                /::\\    \\                /::\\    \\            /::\\    \\                                                 ", 
+    "         /::\\    \\                /::\\____\\                /::\\    \\                /::\\    \\            /::\\    \\                                                 ",
     "        /::::\\    \\              /::::|   |               /::::\\    \\              /::::\\    \\           \\:::\\    \\                                                 ",
     "       /::::::\\    \\            /:::::|   |              /::::::\\    \\            /::::::\\    \\           \\:::\\    \\                                                ",
     "      /:::/\\:::\\    \\          /::::::|   |             /:::/\\:::\\    \\          /:::/\\:::\\    \\           \\:::\\    \\                                               ",
@@ -53,7 +54,7 @@ const input = [
     " \\/____/                    |::|  ~|                    /:::/    /          ~~~~~~~~~~               \\:::\\   \\/____/          \\:::\\    \\                           ",
     "                            |::|   |                   /:::/    /                                     \\:::\\    \\               \\:::\\    \\                          ",
     "                            \\::|   |                  /:::/    /                                       \\:::\\____\\               \\:::\\____\\                         ",
-    "                             \\:|   |                  \\::/    /                                         \\::/    /                \\::/    /                        ", 
+    "                             \\:|   |                  \\::/    /                                         \\::/    /                \\::/    /                        ",
     "                              \\|___|                   \\/____/                                           \\/____/                  \\/____/                          ",
     ""
 ].join('\n')
@@ -96,35 +97,37 @@ const tempaltesBackend = {
     },
 }
 const tempalteChoices = [
-    '后台模板','H5模板','大屏模板','小程序模板','微前端后台模板'
+    '后台模板', 'H5模板', '大屏模板', '小程序模板', '微前端后台模板'
 ]
 const tempalteBackendChoices = [
-    '普通后台模板','可配置后台模板'
+    '普通后台模板', '可配置后台模板'
 ]
-const getSelectTemplate = (answers,tplList) => {
-    for(let item in tplList) {
-        if(answers === tplList[item].description) {
+const getSelectTemplate = (answers, tplList) => {
+    for (let item in tplList) {
+        if (answers === tplList[item].description) {
             return tplList[item]
         }
     }
     return false;
 }
-function renderEjs (files, context) {
-    for(let tpl of files) {
+
+function renderEjs(files, context) {
+    for (let tpl of files) {
         render(tpl)
     }
+
     function render(tpl) {
-        ejs.renderFile(tpl, context, {}, function(err, str){
+        ejs.renderFile(tpl, context, {}, function(err, str) {
             fs.writeFileSync(tpl.replace('.ejs', ''), str, 'utf8')
             fs.removeSync(tpl)
         })
     }
 }
 
-async function startRender (transData) {
+async function startRender(transData) {
     const CWD = process.cwd()
     const PROJECT_DIR = path.resolve(CWD, transData.name)
-    const PROJECT_EJS = glob.sync('**/*.ejs', {cwd: PROJECT_DIR, absolute: true, dot: true})
+    const PROJECT_EJS = glob.sync('**/*.ejs', { cwd: PROJECT_DIR, absolute: true, dot: true })
     renderEjs(PROJECT_EJS, transData)
     console.log(chalk.green('项目创建成功'));
 }
@@ -226,7 +229,7 @@ const binHandler = {
         
     },
     init() {
-      inquirer
+        inquirer
         .prompt([
           {
             type: 'text',
@@ -293,36 +296,35 @@ const binHandler = {
                         startRender(answers)
                         process.exit(1);
                     }
-                })
+                 })
             }
-  
         })
     }
-  };
-program
-    .usage('[cmd] <options>')
-    .arguments('<cmd> [env]')
-    .description('pyra项目模板')
-    .action((cmd, otherParms) => {
-        // console.log(cmd, otherParms);
-        // console.log(tempaltes[templateName].downloadUrl)
-        const handler = binHandler[cmd];
-        if (typeof handler === 'undefined') {
-            console.log(`${chalk.yellow('非常遗憾')}【${chalk.red(cmd)}】${chalk.yellow('暂未开发')}`);
-            process.exit(1);
-        } else {
-            handler(otherParms);
-        }
-    });
+}
+        program
+            .usage('[cmd] <options>')
+            .arguments('<cmd> [env]')
+            .description('pyra项目模板')
+            .action((cmd, otherParms) => {
+                // console.log(cmd, otherParms);
+                // console.log(tempaltes[templateName].downloadUrl)
+                const handler = binHandler[cmd];
+                if (typeof handler === 'undefined') {
+                    console.log(`${chalk.yellow('非常遗憾')}【${chalk.red(cmd)}】${chalk.yellow('暂未开发')}`);
+                    process.exit(1);
+                } else {
+                    handler(otherParms);
+                }
+            });
 
 
-program
-    .command('list')
-    .description('查看所有模板')
-    .action(() => {
-        for (let key in tempaltes) {
-            console.log(`${key}----------------${tempaltes[key].description}`)
-        }
+        program
+            .command('list')
+            .description('查看所有模板')
+            .action(() => {
+                for (let key in tempaltes) {
+                    console.log(`${key}----------------${tempaltes[key].description}`)
+                }
 
-    })
-program.parse(process.argv);
+            })
+        program.parse(process.argv);
