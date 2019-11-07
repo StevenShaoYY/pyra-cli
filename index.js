@@ -143,6 +143,88 @@ const binHandler = {
             return selectItem
         })
     },
+    async test () {
+        let routerFile = await fs.readFile(path.resolve('./src/router/test.js'), "utf-8")
+        console.log(eval(routerFile).aaa)
+        // console.log(JSON.parse(routerFile))
+    },
+    async add () {
+        console.log(process.cwd());
+        console.log(path.resolve('./package.json'));
+        let has = await fs.exists(path.resolve('./package.json'))
+        if(!has) {
+            console.log(chalk.red('请在项目根目录下运行该命令！'))
+            process.exit(1);
+        }
+        let packageFile = await fs.readFile(path.resolve('./package.json'), "utf-8")
+        packageFile = JSON.parse(packageFile)
+        if(packageFile.templateType !== 'Configurable background template') {
+            console.log(chalk.red('该命令只能在 《可配置后台模板》 生成的项目中使用！'))
+            process.exit(1);
+        }
+        inquirer
+        .prompt([
+            {
+              type: 'text',
+              message: '请输入页面文件夹名称(英文)',
+              name: 'fileName',
+              validate: function (input) {
+                  if (input === '') {
+                      console.log(chalk.red('请输入页面文件夹名称!!!!'));
+                      return false;
+                  } else {
+                      return true
+                  }
+                }
+            },
+            {
+              type: 'text',
+              message: '请输入页面名称(中文)',
+              name: 'fileTitle',
+              default: '表单模板'
+            },
+          ])
+          .then( async answers => {
+            let fileNameFlag = await fs.exists(path.resolve(`./src/views/${answers.fileName}`))
+            if(fileNameFlag) {
+                console.log(chalk.red(`${answers.fileName}文件已存在！`))
+                process.exit(1);
+            }
+            const TPL_DIR1 = path.resolve(__dirname, './', 'template/edit.vue.ejs')
+            const TPL_DIR2 = path.resolve(__dirname, './', 'template/formConfig.js.ejs')
+            const TPL_DIR3 = path.resolve(__dirname, './', 'template/index.vue.ejs')
+            const TPL_DIR4 = path.resolve(__dirname, './', 'template/indexConfig.js.ejs')
+            const TPL_DIR5 = path.resolve(__dirname, './', 'template/Service.js.ejs')
+            const TPL_DIR6 = path.resolve(__dirname, './', 'template/router.js.ejs')
+            const page_DIR1 = path.resolve(`./src/views/${answers.fileName}/edit.vue.ejs`)
+            const page_DIR2 = path.resolve(`./src/views/${answers.fileName}/formConfig.js.ejs`)
+            const page_DIR3= path.resolve(`./src/views/${answers.fileName}/index.vue.ejs`)
+            const page_DIR4 = path.resolve(`./src/views/${answers.fileName}/indexConfig.js.ejs`)
+            const page_DIR5 = path.resolve(`./src/api/Service.js.ejs`)
+            const page_DIR6 = path.resolve(`./src/router/routertest.js.ejs`)
+            // for (let i = 1; i<=4;i++) {
+            //     let tp = eval(`TPL_DIR${i}`)
+            //     let pp = eval(`page_DIR${i}`)
+            //     await fs.copy(tp, pp)
+            //     ejs.renderFile(pp, answers, {}, function(err, str){
+            //         fs.writeFile(pp.replace('.ejs', ''), str, 'utf8')
+            //         fs.remove(pp)
+            //    })
+            // }
+            // await fs.copy(TPL_DIR5, page_DIR5)
+            // ejs.renderFile(page_DIR5, answers, {}, function(err, str){
+                
+            //     fs.writeFile(page_DIR5.replace('Service.js.ejs', `${answers.fileName}Service.js`), str, 'utf8')
+            //     fs.remove(page_DIR5)
+            // })
+            await fs.copy(TPL_DIR6, page_DIR6)
+            ejs.renderFile(page_DIR6, answers, {}, function(err, str){
+                // fs.writeFile(page_DIR6.replace('.ejs', ''), str, 'utf8')
+                fs.remove(page_DIR6)
+            })
+          })
+        
+    },
     init() {
       inquirer
         .prompt([

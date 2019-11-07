@@ -1,0 +1,23 @@
+{
+  path: '/<%= fileName %>',
+  component: Layout,
+  meta: { title: '<%= fileTitle %>', icon: 'form', roles: ['admin', 'editor'] },
+  redirect: '/<%= fileName %>/<%= fileName %>index',
+  children: [
+    {
+      path: '<%= fileName %>index',
+      name: '<%= fileName %>Index',
+      component: () =>
+                  import('@/views/<%= fileName %>/index'),
+      meta: { title: '<%= fileTitle %>首页', roles: ['admin', 'editor'] }
+    },
+    {
+      path: '<%= fileName %>Edit',
+      name: '<%= fileName %>Edit',
+      component: () =>
+                  import('@/views/<%= fileName %>/edit'),
+      meta: { title: '<%= fileTitle %>', roles: ['admin', 'editor'] },
+      hidden: true
+    }
+  ]
+}
