@@ -146,11 +146,6 @@ const binHandler = {
             return selectItem
         })
     },
-    async test () {
-        let routerFile = await fs.readFile(path.resolve('./src/router/test.js'), "utf-8")
-        console.log(eval(routerFile).aaa)
-        // console.log(JSON.parse(routerFile))
-    },
     async add () {
         console.log(process.cwd());
         console.log(path.resolve('./package.json'));
@@ -205,24 +200,30 @@ const binHandler = {
             const page_DIR4 = path.resolve(`./src/views/${answers.fileName}/indexConfig.js.ejs`)
             const page_DIR5 = path.resolve(`./src/api/Service.js.ejs`)
             const page_DIR6 = path.resolve(`./src/router/routertest.js.ejs`)
-            // for (let i = 1; i<=4;i++) {
-            //     let tp = eval(`TPL_DIR${i}`)
-            //     let pp = eval(`page_DIR${i}`)
-            //     await fs.copy(tp, pp)
-            //     ejs.renderFile(pp, answers, {}, function(err, str){
-            //         fs.writeFile(pp.replace('.ejs', ''), str, 'utf8')
-            //         fs.remove(pp)
-            //    })
-            // }
-            // await fs.copy(TPL_DIR5, page_DIR5)
-            // ejs.renderFile(page_DIR5, answers, {}, function(err, str){
+            for (let i = 1; i<=4;i++) {
+                let tp = eval(`TPL_DIR${i}`)
+                let pp = eval(`page_DIR${i}`)
+                await fs.copy(tp, pp)
+                ejs.renderFile(pp, answers, {}, function(err, str){
+                    fs.writeFile(pp.replace('.ejs', ''), str, 'utf8')
+                    fs.remove(pp)
+               })
+            }
+            await fs.copy(TPL_DIR5, page_DIR5)
+            ejs.renderFile(page_DIR5, answers, {}, function(err, str){
                 
-            //     fs.writeFile(page_DIR5.replace('Service.js.ejs', `${answers.fileName}Service.js`), str, 'utf8')
-            //     fs.remove(page_DIR5)
-            // })
+                fs.writeFile(page_DIR5.replace('Service.js.ejs', `${answers.fileName}Service.js`), str, 'utf8')
+                fs.remove(page_DIR5)
+            })
             await fs.copy(TPL_DIR6, page_DIR6)
-            ejs.renderFile(page_DIR6, answers, {}, function(err, str){
-                // fs.writeFile(page_DIR6.replace('.ejs', ''), str, 'utf8')
+            ejs.renderFile(page_DIR6, answers, {}, async function(err, str){
+                let routerFile = await fs.readFile(path.resolve('./src/router/asyncRoutes.js'), "utf-8")
+                let routerFileList = routerFile.split('asyncRoutes = ')
+                let AsyncRouter  = routerFileList[1].trim()
+                AsyncRouter = AsyncRouter.substring(0, AsyncRouter.length - 1 )
+                AsyncRouter = AsyncRouter.trim() + ',\n  '+ str + '\n]\n'
+                let fileHandled = routerFileList[0] + 'asyncRoutes = ' + AsyncRouter
+                fs.writeFile('./src/router/asyncRoutes.js', fileHandled, 'utf8')
                 fs.remove(page_DIR6)
             })
           })
