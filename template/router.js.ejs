@@ -8,7 +8,7 @@
         path: '<%= fileName %>index',
         name: '<%= fileName %>Index',
         component: () => import('@/views/<%= fileName %>/index'),
-        meta: { title: '<%= fileTitle %>首页', roles: ['admin', 'editor'] }
+        meta: { title: '<%= fileTitle %>', roles: ['admin', 'editor'] }
       },
       {
         path: '<%= fileName %>Edit',
