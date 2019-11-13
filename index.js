@@ -87,12 +87,12 @@ const tempaltes = {
 const tempaltesBackend = {
     'normal': {
         url: 'https://git.wenlvcloud.com/luzy/admin-template',
-        downloadUrl: 'http://61.174.54.76:8000:luzy/admin-template#template',
+        downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#normal',
         description: '普通后台模板'
     },
     'withForm': {
         url: 'https://git.wenlvcloud.com/luzy/admin-template',
-        downloadUrl: 'http://61.174.54.76:8000:luzy/admin-template#template',
+        downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#master',
         description: '可配置后台模板'
     },
 }
