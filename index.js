@@ -76,7 +76,8 @@ const tempaltes = {
         description: '大屏模板'
     },
     'xcc': {
-        url: '',
+        url: 'https://git.wenlvcloud.com/shaojy/h5-template',
+        downloadUrl: 'https://git.wenlvcloud.com:shaojy/xcx_template#master',
         description: '小程序模板'
     },
     'micro': {
