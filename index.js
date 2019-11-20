@@ -62,21 +62,22 @@ program.version(input, "-v --version");
 
 const tempaltes = {
     'backend': {
-        url: 'https://git.wenlvcloud.com/luzy/admin-template',
+       url: 'https://git.wenlvcloud.com/shaojy/admin-template',
         downloadUrl: 'http://61.174.54.76:8000:luzy/admin-template#template',
         description: '后台模板'
     },
     'h5': {
-        url: 'https://git.wenlvcloud.com/shaojy/h5-template',
+        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
         downloadUrl: 'http://61.174.54.76:8000:shaojy/h5-template#template',
         description: 'H5模板'
     },
     'dashboard': {
-        url: '',
+        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
+        downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#dashboard',
         description: '大屏模板'
     },
     'xcc': {
-        url: 'https://git.wenlvcloud.com/shaojy/h5-template',
+        url: 'https://git.wenlvcloud.com/shaojy/xcx-template',
         downloadUrl: 'https://git.wenlvcloud.com:shaojy/xcx_template#master',
         description: '小程序模板'
     },
@@ -87,12 +88,12 @@ const tempaltes = {
 }
 const tempaltesBackend = {
     'normal': {
-        url: 'https://git.wenlvcloud.com/luzy/admin-template',
+        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
         downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#normal',
         description: '普通后台模板'
     },
     'withForm': {
-        url: 'https://git.wenlvcloud.com/luzy/admin-template',
+        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
         downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#master',
         description: '可配置后台模板'
     },
@@ -103,6 +104,21 @@ const tempalteChoices = [
 const tempalteBackendChoices = [
     '普通后台模板', '可配置后台模板'
 ]
+const tempalteMicroBackendChoices = [
+    '微前端子项目', '微前端入口项目'
+]
+const tempaltesMicroBackend = {
+    'normal': {
+        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
+        downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#micro',
+        description: '微前端子项目'
+    },
+    'withForm': {
+        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
+        downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#master',
+        description: '微前端入口项目'
+    },
+}
 const getSelectTemplate = (answers, tplList) => {
     for (let item in tplList) {
         if (answers === tplList[item].description) {
@@ -145,6 +161,18 @@ const binHandler = {
                 return selectItem
             })
     },
+    async micro() {
+        return inquirer
+            .prompt([{
+                type: 'list',
+                message: '请选择微前端模板类别',
+                choices: tempalteMicroBackendChoices,
+                name: 'backkind'
+            }]).then(answers => {
+                const selectItem = getSelectTemplate(answers.backkind, tempaltesMicroBackend)
+                return selectItem
+            })
+    },
     async add() {
         let has = await fs.exists(path.resolve('./package.json'))
         if (!has) {
@@ -176,6 +204,11 @@ const binHandler = {
                     message: '请输入页面名称(中文)',
                     name: 'fileTitle',
                     default: '表单模板'
+                },
+                {
+                  type: 'text',
+                  message: '请输入API接口前缀名（为空则不需要）',
+                  name: 'ServiceName'
                 },
             ])
             .then(async answers => {
@@ -273,6 +306,12 @@ const binHandler = {
                     if (selectItem.description === '后台模板') {
                         const tempAnswer = await binHandler['form']()
                         selectItem.downloadUrl = tempAnswer.downloadUrl
+                    }
+                    if (selectItem.description === '微前端后台模板') {
+                        const tempAnswer = await binHandler['micro']()
+                        selectItem.downloadUrl = tempAnswer.downloadUrl
+                        answers.projectNameCapital = answers.name.toUpperCase()
+
                     }
                     const spinner = ora('下载初始化模板中，请稍等...');
                     spinner.start();
