@@ -62,23 +62,23 @@ program.version(input, "-v --version");
 
 const tempaltes = {
     'backend': {
-       url: 'https://git.wenlvcloud.com/shaojy/admin-template',
-        downloadUrl: 'http://61.174.54.76:8000:luzy/admin-template#template',
+        url: 'https://github.com/StevenShaoYY/backend_template',
+        downloadUrl: 'https://github.com:StevenShaoYY/backend_template#master',
         description: '后台模板'
     },
     'h5': {
-        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
-        downloadUrl: 'http://61.174.54.76:8000:shaojy/h5-template#template',
+        url: 'https://github.com/StevenShaoYY/h5_template',
+        downloadUrl: 'https://github.com:StevenShaoYY/h5_template#master',
         description: 'H5模板'
     },
     'dashboard': {
-        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
-        downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#dashboard',
+        url: 'https://github.com:StevenShaoYY/backend_template#dashboard',
+        downloadUrl: 'https://github.com:StevenShaoYY/backend_template#dashboard',
         description: '大屏模板'
     },
     'xcc': {
-        url: 'https://git.wenlvcloud.com/shaojy/xcx-template',
-        downloadUrl: 'https://git.wenlvcloud.com:shaojy/xcx_template#master',
+        url: 'https://github.com/StevenShaoYY/xcx_template',
+        downloadUrl: 'https://github.com:StevenShaoYY/xcx_template#master',
         description: '小程序模板'
     },
     'micro': {
@@ -88,13 +88,13 @@ const tempaltes = {
 }
 const tempaltesBackend = {
     'normal': {
-        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
-        downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#normal',
+        url: 'https://github.com:StevenShaoYY/backend_template#master',
+        downloadUrl: 'https://github.com:StevenShaoYY/backend_template#normal',
         description: '普通后台模板'
     },
     'withForm': {
-        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
-        downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#master',
+        url: 'https://github.com:StevenShaoYY/backend_template#master',
+        downloadUrl: 'https://github.com:StevenShaoYY/backend_template#master',
         description: '可配置后台模板'
     },
 }
@@ -109,13 +109,13 @@ const tempalteMicroBackendChoices = [
 ]
 const tempaltesMicroBackend = {
     'normal': {
-        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
-        downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#micro',
+        url: 'https://github.com:StevenShaoYY/backend_template#master',
+        downloadUrl: 'https://github.com:StevenShaoYY/backend_template#micro',
         description: '微前端子项目'
     },
     'withForm': {
-        url: 'https://git.wenlvcloud.com/shaojy/admin-template',
-        downloadUrl: 'https://git.wenlvcloud.com:shaojy/backend-template#master',
+        url: 'https://github.com:StevenShaoYY/backend_template#micro',
+        downloadUrl: 'https://github.com:StevenShaoYY/backend_template#micro_portal',
         description: '微前端入口项目'
     },
 }
@@ -358,6 +358,7 @@ program
     .command('list')
     .description('查看所有模板')
     .action(() => {
+        console.log('version:1.0.5')
         for (let key in tempaltes) {
             console.log(`${key}----------------${tempaltes[key].description}`)
         }
